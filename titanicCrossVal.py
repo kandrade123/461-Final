@@ -6,6 +6,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn import svm
+from sklearn.preprocessing import MinMaxScaler
 
 #Data Processing
 
@@ -32,6 +33,10 @@ data = data.drop(['Survived'], axis=1)
 #Get the input data
 X = np.array(data)
 
+#Normalize Data (Increases speed drastically and Seems to increase accuracy as well)
+scaler = MinMaxScaler()  
+X = scaler.fit_transform(X)
+
 
 #Cross Validation Training
 
@@ -50,7 +55,7 @@ for K in range(25):
 
 #Gaussian SVM
 print ("\n######### Gaussian SVM CROSS VAL ####################\n")
-for C in range(10):
+for C in range(15):
     C_value = C+1
     clf = svm.SVC(kernel='rbf', C=C_value,gamma ='auto')
     clf.fit(X_train, y_train) 
@@ -59,13 +64,13 @@ for C in range(10):
 
 #Polynomial SVM
 print ("\n######### Polynomial SVM ####################\n")
-for d in range (10):
+for d in range (7):
     print ("\nDegree = ", d)
-    
-    C_value = 10
-    clf = svm.SVC(kernel='poly',degree = d, C=C_value,gamma ='auto')
-    clf.fit(X_train, y_train) 
-    y_pred = clf.predict(X_test)
-    print ("Accuracy is ", accuracy_score(y_test,y_pred)*100,"% for C Value:",C_value,"and degree: ",d)
+    for C in range(10):
+        C_value = C+1
+        clf = svm.SVC(kernel='poly',degree = d, C=C_value,gamma ='auto')
+        clf.fit(X_train, y_train) 
+        y_pred = clf.predict(X_test)
+        print ("Accuracy is ", accuracy_score(y_test,y_pred)*100,"% for C Value:",C_value,"and degree: ",d)
 
 
